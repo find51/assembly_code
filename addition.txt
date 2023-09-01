@@ -1,0 +1,47 @@
+.model small 
+.data
+
+  str1 db "Enter first number: $"
+  str2 db 13,10,"Enter second number: $"
+  str3 db 13,10,"The sum is: $"
+
+.code
+main proc
+    mov ax,@data
+    mov ds,ax 
+    
+    lea dx,str1   ;display first message
+    mov ah,09h
+    int 21h 
+    
+    mov ah,01h    ;takes 1st input
+    int 21h  
+    
+    mov bl,al     ;stored data in bl register
+    
+    lea dx,str2   ;display second message
+    mov ah,09h
+    int 21h 
+    
+    mov ah,01h    ;takes 2nd input
+    int 21h  
+    
+    mov bh,al     ;stored data in bh register
+    
+    sub bh,48
+    sub bl,48  
+    
+    lea dx,str3   ;display output message
+    mov ah,09h
+    int 21h  
+     
+    add bh,bl
+    add bh,48
+    mov dl,bh
+    mov ah,02h    ;display addition result
+    int 21h
+    
+    mov ah,4Ch
+    int 21h
+main endp
+end
