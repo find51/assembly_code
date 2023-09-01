@@ -1,0 +1,73 @@
+.model small
+.stack 100h
+
+.data  
+  msg_dividend db 'Enter the dividend: $'
+  msg_divisor db 13, 10,'Enter the divisor: $'
+  msg_quotinet db 13, 10, 'Quotient: $'
+  msg_reminder db 13, 10, 'Reminder: $' 
+  dividend db ?
+  divisor db ?
+  result db ?
+  reminder db ?
+
+.code
+  main proc
+    mov ax, @data
+    mov ds, ax
+
+    ; Display message to enter the dividend
+    mov ah, 9
+    lea dx, msg_dividend
+    int 21h
+
+    ; Read the dividend from the keyboard
+    mov ah, 1
+    int 21h
+    sub al, 30h ; Convert ASCII digit to binary
+    mov dividend, al   
+    
+
+    ; Display message to enter the divisor
+    mov ah, 9
+    lea dx, msg_divisor
+    int 21h
+
+    ; Read the divisor from the keyboard
+    mov ah, 1
+    int 21h
+    sub al, 30h ; Convert ASCII digit to binary
+    mov divisor, al
+
+    ; Divide the numbers
+    xor ah, ah ; Clear upper bits of AX
+    mov al, dividend ; Move the dividend to AL
+    mov bl, divisor ; Move the divisor to BL
+    div bl ; Divide AL by BL
+    mov result, al ; Move the quotient to the result variable
+    mov reminder, ah ; Move the quotient to the quotient variable
+
+    ; Display the result
+    mov ah, 9
+    lea dx, msg_quotinet
+    int 21h
+    mov dl, result
+    add dl, 30h ; Convert binary to ASCII digit
+    mov ah, 2
+    int 21h  
+    
+    ; Display the reminder
+    mov ah, 9
+    lea dx, msg_reminder
+    int 21h
+    mov dl, reminder
+    add dl, 30h ; Convert binary to ASCII digit
+    mov ah, 2
+    int 21h
+
+    mov ah, 4Ch
+    int 21h
+  main endp
+
+
+end main
