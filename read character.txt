@@ -1,0 +1,78 @@
+.model small
+.stack 100h
+
+.data
+    prompt_msg1 db 0AH, 0DH, "Enter the first number: $"
+    prompt_msg2 db 0AH, 0DH, "Enter the second number: $"
+    error_msg db 0AH, 0DH, "Invalid input. $"
+    compared_msg db 0AH, 0DH, "Larger number is: $"
+
+.code  
+main proc
+    
+    mov ax, @data
+    mov ds, ax
+    mov ss, ax
+    mov sp, 100h
+    
+    lea dx, prompt_msg1
+    mov ah, 09h             ; Display prompt message
+    int 21h
+                            ; Read a character from user
+    mov ah, 01h
+    int 21h                 
+    mov bl, al              ; Save the input character in BL register   
+    
+    cmp bl, '0'             ; Check if the input is a valid number
+    jl check_invalid_input
+    cmp bl, '9'
+    jg check_invalid_input
+       
+    lea dx, prompt_msg2
+    mov ah, 09h             ; Display prompt message
+    int 21h
+                            ; Read a character from user
+    mov ah, 01h
+    int 21h
+    mov cl, al                     
+            
+    cmp al, '0'             ; Check if the input is a valid number
+    jl check_invalid_input
+    cmp bl, '9'
+    jg check_invalid_input
+                        
+    cmp bl,cl                                             
+    jg  a_is_larger
+    jl b_is_larger
+    
+    
+a_is_larger:     
+    lea dx, compared_msg
+    mov ah, 09h
+    int 21h                 ; Display converted character message
+    
+    mov dl, bl              ; Display the larger number
+    mov ah, 02h
+    int 21h
+    jmp end_program
+
+b_is_larger:     
+    lea dx, compared_msg
+    mov ah, 09h
+    int 21h                 ; Display converted character message
+    
+    mov dl, cl              ; Display the larger number
+    mov ah, 02h
+    int 21h
+    jmp end_program
+
+check_invalid_input:    
+    lea dx, error_msg       ; Display error message for invalid input
+    mov ah, 09h
+    int 21h
+
+end_program:    
+    mov ah, 4Ch             ; Exiting the program
+    int 21h
+    main endp
+end main

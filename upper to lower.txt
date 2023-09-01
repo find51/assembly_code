@@ -1,0 +1,74 @@
+.model small
+.stack 100h
+
+.data
+    prompt_msg db 0AH, 0DH, "Enter a character: $"
+    error_msg db 0AH, 0DH, "Invalid input.$"
+    converted_msg db 0AH, 0DH, "Converted character: $"
+
+.code  
+main proc
+    
+    mov ax, @data          ; Set the initial data segment and stack pointer
+    mov ds, ax
+    mov ss, ax
+    mov sp, 100h
+
+    lea dx, prompt_msg     ; Display prompt message
+    mov ah, 09h
+    int 21h
+
+    mov ah, 01h            ; Read a character from standard input (stdin)
+    int 21h
+    mov bl, al             ; Save the input character in BL register
+
+    cmp bl, 'A'            ; Check if the input is a capital letter (A-Z)
+    jl check_invalid_input
+    cmp bl, 'Z'
+    jg check_lower_bound
+
+    ; Convert capital letter to smaller letter
+    add bl, 20h  ; ASCII difference between capital and smaller letters
+
+    lea dx, converted_msg   ; Display converted character message
+    mov ah, 09h
+    int 21h
+
+   
+    mov dl, bl              ; Display the converted character
+    mov ah, 02h
+    int 21h
+
+    jmp end_program
+
+check_lower_bound:
+    cmp bl, 'a'             ; Check if the input is a smaller letter (a-z)
+    jl check_invalid_input
+    cmp bl, 'z'
+    jg check_invalid_input
+
+    ; Convert smaller letter to capital letter
+    sub bl, 20h  ; ASCII difference between smaller and capital letters
+
+   
+    lea dx, converted_msg    ; Display converted character message
+    mov ah, 09h
+    int 21h
+
+    mov dl, bl                ; Display the converted character
+    mov ah, 02h
+    int 21h
+
+    jmp end_program
+
+check_invalid_input:
+    lea dx, error_msg         ; Display error message for invalid input
+    mov ah, 09h
+    int 21h
+
+end_program:
+    mov ah, 4Ch
+    int 21h
+
+main endp
+end main
