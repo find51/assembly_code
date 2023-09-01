@@ -1,0 +1,71 @@
+.model small
+.stack 100h
+
+.data
+    message1 db "Enter the first number: $"
+    message2 db "Enter the second number: $"
+    result db "Result: $"
+    newline db 10, 13, '$'
+    num1 dw ?
+    num2 dw ?
+    product dw ?
+
+.code
+    mov ax, @data
+    mov ds, ax
+
+    ; Display message to enter the first number
+    mov ah, 09h
+    lea dx, message1
+    int 21h
+
+    ; Read the first number from keyboard
+    mov ah, 01h
+    int 21h
+    sub al, '0' ; Convert ASCII to numeric value
+    mov bl, al
+    mov num1, bx
+    
+    ; Display a new line
+    mov ah, 09h
+    lea dx, newline
+    int 21h
+
+    ; Display message to enter the second number
+    mov ah, 09h
+    lea dx, message2
+    int 21h
+
+    ; Read the second number from keyboard
+    mov ah, 01h
+    int 21h  
+    sub al, '0' ; Convert ASCII to numeric value
+    mov bl, al
+    mov num2, bx
+
+    ; Multiply the numbers
+    mov ax, num1
+    mul num2
+    mov product, ax
+               
+    ; Display a new line
+    mov ah, 09h
+    lea dx, newline
+    int 21h
+    
+    ; Display the result
+    mov ah, 09h
+    lea dx, result
+    int 21h
+
+    mov ax, product
+    add ax, '0' ; Convert numeric value to ASCII
+    mov dl, al
+    mov ah, 02h
+    int 21h
+
+    ; Terminate the program
+    mov ah, 4Ch
+    mov al, 00h
+    int 21h
+end
