@@ -1,54 +1,48 @@
-.model small
-.stack 100h
-.data  
- m1 db "Enter first: $" 
- m2 db "Enter second: $"
- dis db "Substraction: $"
- val1 db ?
- val2 db ?
+.model small 
+.data
+
+  str1 db "Enter first number: $"
+  str2 db 0ah,0dh,"Enter second number: $"
+  str3 db 0ah,0dh,"Substraction is: $"
+
 .code
 main proc
     mov ax,@data
-    mov ds,ax
+    mov ds,ax 
     
-    mov ah,01h
-    int 21h
-    
-    sub al,30h
-    mov val1,al
-    
-    mov ah,02h
-    mov dl,0dh
-    int 21h
-    
-    mov ah,02h
-    mov dl,0ah
-    int 21h
-    
-    mov ah,01h
+    lea dx,str1   ;display first message
+    mov ah,09h
     int 21h 
     
-    sub al,30h
-    mov val2,al
+    mov ah,01h    ;takes 1st input
+    int 21h  
     
-    mov ah,02h
-    mov dl,0dh
+    mov bl,al     ;stored data in bl register
+    
+    lea dx,str2   ;display second message
+    mov ah,09h
+    int 21h 
+    
+    mov ah,01h    ;takes 2nd input
+    int 21h  
+    
+    mov cl,al     ;stored data in bh register
+    
+    sub bl,48
+    sub cl,48  
+    
+    lea dx,str3   ;display output message
+    mov ah,09h
+    int 21h  
+     
+    sub bl,cl
+    add bl,48  
+    
+    mov dl,bl
+    mov ah,02h    ;display addition result
     int 21h
     
-    mov ah,02h
-    mov dl,0ah
+    mov ah,4Ch
     int 21h
-            
-    mov al,val1
-    sub al,val2
-    add al,30h
-    
-    mov ah,02h
-    mov dl,al
-    int 21h
-    
-    mov ah,4ch
-    int 21h   
-    main endp
+main endp
 end main
-    
